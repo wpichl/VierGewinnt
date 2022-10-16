@@ -1,19 +1,31 @@
 object Engine {
-    private var mGameRunning : Boolean = true
-    private var mBoardSetup : Boolean = false
-    private var mCurrentPlayer : String = "X"
+    private var mGameRunning: Boolean = true
+    private var mBoardSetup: Boolean = false
+    private var mCurrentPlayer: String = "X"
     private lateinit var mBoard: Board
 
     private fun getColumn(): Int {
         print("[Player: ${this.mCurrentPlayer}] Column to place token in: ")
 
-        var readInput: Boolean = true
-        var column: Int = 0
+        var readInput = true
+        var column = 0
 
         while (readInput)
         {
             try {
-                column = readLine()!!.toInt()
+                val input: String = readLine()!!
+
+                if (input.lowercase() == "n") {
+                    this.mBoardSetup = false
+                    return -1
+                }
+
+                column = input.toInt()
+
+                if (column == 0) {
+                    this.mGameRunning = false
+                    return -1
+                }
 
                 if (column < 1 || column > this.mBoard.width) {
                     println("column must be greater than 1 and less or equal to the boards column size!")
@@ -26,7 +38,7 @@ object Engine {
             }
         }
 
-        return column
+        return column - 1;
     }
 
     private fun switchPlayer() {
@@ -59,8 +71,18 @@ object Engine {
                 println("Column full!")
             }
 
-            this.mBoard.printBoard()
-            this.switchPlayer()
+            if (this.mGameRunning && this.mBoardSetup) {
+                this.mBoard.printBoard()
+                this.switchPlayer()
+            }
         }
+    }
+
+    fun reportWin(player: String) {
+        this.mBoard.printBoard()
+
+        println("Player $player has won!")
+
+        this.mBoardSetup = false
     }
 }
