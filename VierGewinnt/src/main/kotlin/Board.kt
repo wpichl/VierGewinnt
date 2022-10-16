@@ -6,7 +6,7 @@ class Board {
     constructor(width: Int, height: Int) {
         this.mWidth = width
         this.mHeight = height
-        this.mBoard = Array(this.mWidth) { Array(this.mHeight) { " " } }
+        this.mBoard = Array(this.mHeight) { Array(this.mWidth) { " " } }
     }
 
     val width get() = this.mWidth
@@ -14,6 +14,7 @@ class Board {
 
     private fun checkVertical(row: Int, column: Int, icon: String): Boolean {
         var isContinuous = true
+
         if ((this.height - row) == 4) {
             for (i in 0 until 4) {
                 if (this.mBoard[row + i][column] != icon) {
@@ -51,11 +52,32 @@ class Board {
         return isContinuous
     }
 
-    private fun checkWin(row: Int, column: Int, player: String): Boolean {
+    private fun checkDiagonal(icon: String): Boolean {
+        for (row in 0 until (this.mBoard.size - 3)) {
+            for (col in 0 until (this.mBoard[row].size - 3)) {
+                if (this.mBoard[row][col] == icon && this.mBoard[row + 1][col + 1] == icon && this.mBoard[row + 2][col + 2] == icon && this.mBoard[row + 3][col +3] == icon) {
+                    return true
+                }
+            }
+        }
 
-        print("row: $row, column: $column")
-        //return this.checkVertical(row, column, player)
-        return this.checkHorizontal(row, column, player)
+        return false
+    }
+
+    private fun checkCounterDiagonal(icon: String): Boolean {
+        for (row in 0 until (this.mBoard.size - 3)) {
+            for (col in 3 until this.mBoard[row].size) {
+                if (this.mBoard[row][col] == icon && this.mBoard[row + 1][col - 1] == icon && this.mBoard[row + 2][col - 2] == icon && this.mBoard[row + 3][col - 3] == icon) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun checkWin(row: Int, column: Int, player: String): Boolean {
+        return this.checkVertical(row, column, player) || this.checkHorizontal(row, column, player) || this.checkDiagonal(player) || this.checkCounterDiagonal(player)
     }
 
     fun placeToken(column: Int, player: String) : Boolean {
@@ -88,7 +110,7 @@ class Board {
         }
 
         print("   ")
-        for (i in 0 until this.mBoard.size) {
+        for (i in 0 until this.mBoard[1].size) {
             print(" ${i + 1}  ")
         }
 
